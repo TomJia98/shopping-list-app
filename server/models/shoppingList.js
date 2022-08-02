@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const dateFormat = require("../utils/dateFormat");
+const Recipe = require("./Recipe");
 
 const listSchema = new Schema({
   listName: { type: String, required: true },

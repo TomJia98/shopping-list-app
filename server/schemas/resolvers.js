@@ -1,5 +1,5 @@
 const { AuthenticationError } = require("apollo-server-express");
-const { User, shoppingList, Recipes } = require("../models");
+const { User, shoppingList, Recipe } = require("../models");
 const { signToken } = require("../utils/auth");
 
 const resolvers = {
@@ -14,9 +14,9 @@ const resolvers = {
     },
     me: async (parent, args, context) => {
       if (context.user) {
-        return User.findOne({ _id: context.user._id })
-          .populate("Recipe")
-          .populate("shoppingList");
+        return User.findOne({ _id: context.user._id });
+        // .populate("Recipe")
+        // .populate("shoppingList");
       }
       throw new AuthenticationError("You need to be logged in!");
     },
@@ -27,6 +27,9 @@ const resolvers = {
       const user = await User.create({ username, password });
       const token = signToken(user);
       return { token, user };
+    },
+    removeUser: async (parent, { _id }, context)=>{
+
     },
     login: async (parent, { username, password }) => {
       const user = await User.findOne({ username });
@@ -47,7 +50,7 @@ const resolvers = {
     }, //need to change the following routes to change the things in the contxt of the user, not creating new stuff
     //actually, newly created items jsut need to have their id's added to the arrays of the owning schemas
     createRecipe: async (parent, { recipeName, items, colour }, context) => {
-      const newRecipe = await Recipes.create({ recipeName, items, colour });
+      const newRecipe = await Recipe.create({ recipeName, items, colour });
       if (!newRecipe) {
         throw new AuthenticationError("recipe creation failed");
       } else {
@@ -62,7 +65,7 @@ const resolvers = {
     },
 
     updateRecipe: async (parent, { _id, recipeName, items, colour }) => {
-      const updateRecipe = await Recipes.findOneAndUpdate(
+      const updateRecipe = await Recipe.findOneAndUpdate(
         { _id },
         { recipeName, items, colour },
         { new: true }
@@ -88,10 +91,10 @@ const resolvers = {
       }
     },
 
-    updateList: async (parent, { _id, listName, recipes, singleItem }) => {
+    updateList: async (parent, { _id, listName, recipe, singleItem }) => {
       const updateList = await shoppingList.findOneAndUpdate(
         { _id },
-        { listName, recipes, singleItem },
+        { listName, recipe, singleItem },
         { new: true }
       );
       if (!updateList) {

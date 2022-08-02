@@ -5,7 +5,7 @@ const typeDefs = gql`
     _id: ID
     username: String!
     password: String!
-    recipes: [Recipes]
+    recipe: [Recipe]
     list: [shoppingList]
   }
 
@@ -19,7 +19,7 @@ const typeDefs = gql`
   type shoppingList {
     _id: ID
     listName: String!
-    recipes: [Recipe]
+    recipe: [Recipe]
     singleItem: [String]
   }
 
@@ -34,14 +34,30 @@ const typeDefs = gql`
     me: User
   }
 
+  type Query {
+    users: [User]
+    user(username: String!): User
+    me: User
+  }
+
   type Mutation {
     addUser(username: String!, password: String!): Auth
+    removeUser(_id: ID!)
     login(username: String!, password: String!): Auth
     createList(listName: String!): shoppingList
-    updateList(_id: ID!, listName: String, recipes: [Recipe], singleItem: [String]) : shoppingList
-    createRecipe(recipeName: String!, colour: String!, items: [String]) : Recipe
-    updateRecipe(_id: ID!, recipeName: String!, colour: String!, items: [String]: Recipe
-
+    updateList(
+      _id: ID!
+      listName: String
+      recipes: [ID]
+      singleItem: [String]
+    ): shoppingList
+    createRecipe(recipeName: String!, colour: String!, items: [String]): Recipe
+    updateRecipe(
+      _id: ID!
+      recipeName: String!
+      colour: String!
+      items: [String]
+    ): Recipe
   }
 `;
 
