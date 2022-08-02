@@ -28,8 +28,15 @@ const resolvers = {
       const token = signToken(user);
       return { token, user };
     },
-    removeUser: async (parent, { _id }, context)=>{
+    removeUser: async (parent, { _id }, context) => {
+      // for testing purposes, having the id be sent is better. otherwise, users should only be able to delete through context to avoid them being able to delete another user
+      const removeUser = await User.findOneAndDelete({ _id });
 
+      if (!removeUser) {
+        throw new AuthenticationError("no user with this ID to delete");
+      } else {
+        return removeUser;
+      }
     },
     login: async (parent, { username, password }) => {
       const user = await User.findOne({ username });
